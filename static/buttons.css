@@ -24,9 +24,7 @@
 }
 
 .buttons_main {
-    display: block;
-    text-align: center;
-    max-width: 50%;
+    max-width: 80%;
     font-family: Arial;
     font-size: 17px;
     background-color: rgba(255, 255, 255, 0.15);
@@ -42,14 +40,9 @@
 }
 
 .buttons_main:hover {
-    /*background-color: #177769;*/
     background-color: rgba(25, 195, 255, 0.2);
     box-shadow: 0 0 20px rgba(4, 255, 226, 0.8);
 }
-
-/*#btn2 {*/
-/*    margin-top: 53.5px;*/
-/*}*/
 
 .buttons_request {
     margin-top: 0;
