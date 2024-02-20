@@ -6,20 +6,18 @@ import json
 
 class AutoAnkets:
     def __init__(self):
+        self.data = {}
         self.url_login = 'https://lk.samgtu.ru/site/login'
         self.url_ankets = 'https://lk.samgtu.ru/questionnaires/questionnaires/answer'
         self.url_answer = 'https://lk.samgtu.ru/questionnaires/questionnaires/suggest'
         self.url_questions = 'https://lk.samgtu.ru/questionnaires/questionnaires/questions'
-        self.headers = {
-            'Referer': 'https://lk.samgtu.ru/site/login',
-        }
-        self.data = {
-            '_csrf': "",
-        }
 
     def authorize(self, login, passwd):
         resp = requests.get(self.url_login)
-        self.headers['Cookie'] = resp.headers['Set-Cookie'].split(' ')[0]
+        self.headers = {
+            'Cookie': resp.headers['Set-Cookie'].split(' ')[0],
+            'Referer': 'https://lk.samgtu.ru/site/login'
+        }
         data = {
             '_csrf': 'qwerty==',
             'LoginForm[username]': login,
@@ -38,8 +36,6 @@ class AutoAnkets:
         soup = bs(response_ankets.text, 'html.parser')
         self.ankets = soup.find_all('td', class_='selected-row')
         div_element = soup.find('div', {'id': 'questionnaires-answer'})
-        if div_element is None:
-            return None
         ng_init_value = div_element.get('ng-init')
         if ng_init_value:
             self.initForm_value = ng_init_value.split('(')[1].split(')')[0]
@@ -59,7 +55,7 @@ class AutoAnkets:
             self.url_questions + '?PersonID=' + self.initForm_value + '&QuestionID=' + self.id_number + '&i=0' + '&StudyFormID=1',
             headers=self.headers)
         if '_csrf' not in self.headers['Cookie']:
-            self.headers['Cookie'] = f'{self.headers['Cookie']}; {resp_questions.headers["Set-Cookie"]}'
+            self.headers['Cookie'] = f'{self.headers["Cookie"]}; {resp_questions.headers["Set-Cookie"]}'
         self.json_data = json.loads(resp_idk.text)
         soup = bs(resp_questions.text, 'html.parser')
         self.csrf_to_post = soup.find('input', {'name': '_csrf'}).get('value')

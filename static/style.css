@@ -138,18 +138,12 @@ a p {
 .container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
 }
 
 .element {
     margin-top: 10px;
     margin-bottom: 10px;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
 }
 
 .otvet {
@@ -160,7 +154,9 @@ ul {
     font-size: 20px;
 }
 
-#kostyl {
-    box-shadow: none;
-    background-color: unset;
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

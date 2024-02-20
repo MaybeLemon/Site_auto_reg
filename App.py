@@ -5,6 +5,8 @@ from navigation import *
 
 class WebSite:
     def __init__(self, __name__):
+        self.login = ''
+        self.passwd = ''
         self.app = Flask(__name__)
         self.setup_routes()
         self.getter_ankets = AutoAnkets()
@@ -26,9 +28,9 @@ class WebSite:
             if request.method == 'GET':
                 return render_template('authorize.html', data=self.data)
             elif request.method == 'POST':
-                login = request.form['login']
-                passwd = request.form['passwd']
-                if self.getter_ankets.authorize(login, passwd):
+                self.login = request.form['login']
+                self.passwd = request.form['passwd']
+                if self.getter_ankets.authorize(self.login, self.passwd):
                     resp = make_response(redirect('/selector'))
                     resp.set_cookie('user', 'Authorized')
                     return resp
@@ -41,25 +43,28 @@ class WebSite:
             if 'user' not in request.cookies:
                 self.data['otvet_auth'] = 'Авторизуйтесь!'
                 return render_template('authorize.html', data=self.data)
+            else:
+                if self.login == '' or self.passwd == '':
+                    self.data['otvet_auth'] = 'Авторизуйтесь!'
+                    return render_template('authorize.html', data=self.data)
+                else:
+                    self.getter_ankets.authorize(self.login, self.passwd)
             if request.method == 'GET':
-                self.data['otvet_ankets'] = ''
-                if 'ankets' not in self.data.keys() or self.data['ankets'] is None:
+                if 'ankets' not in self.data.keys() or self.data['ankets'] is None or self.data['ankets'] == []:
                     self.data['ankets'] = self.getter_ankets.ankets_view()
-                    print(self.data['ankets'])
                 return render_template('ankets_selector.html', data=self.data)
             elif request.method == 'POST':
-                if 'id:' in request.form:
-                    self.data['id_number'] = request.form.get('id')
-                    if self.data['id_number'] and self.data['id_number'] in self.data['ankets']:
-                        self.getter_ankets.get_anket_from_user(self.data['id_number'])
+                self.data['id_number'] = request.form.get('id')
+                if self.data['id_number'] and any(self.data['id_number'] in anketa for anketa in self.data['ankets']):
+                    self.getter_ankets.get_anket_from_user(self.data['id_number'])
                     if self.getter_ankets.post_data() == '1':
-                        self.data['otvet_ankets'] = 'Данные отправлены'
+                        self.data['otvet_ankets'] = f'Данные об отправлены'
                         return redirect('/selector')
                     else:
                         self.data['otvet_ankets'] = 'Произошла ошибка'
                         return redirect('/selector')
                 else:
-                    self.data['otvet_ankets'] = 'Произошла ошибка'
+                    self.data['otvet_ankets'] = 'Такой анкеты нет'
                     return redirect('/selector')
 
 

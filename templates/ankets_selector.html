@@ -17,12 +17,14 @@
     </header>
     <div class="container">
         <div class="element">
-            <form action="/selector" method="POST">
+            <div class="buttons_container">
+                <form action="/selector" method="POST">
                 {% for x in data['ankets'] %}
                     <button class="buttons_main" type="submit" id="{{ x[0] }}" name="id" value="{{ x[0] }}">{{ x[1] }}</button><br>
                 {% endfor %}
             </form>
             <p>{{ data['otvet_ankets'] }}</p>
+            </div>
         </div>
 
     </div>
